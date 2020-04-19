@@ -1,7 +1,7 @@
 module.exports = function (app) {
   var Customer = app.models.Customer;
 
-  Customer.findOne({ username: "Admin" }, (err, users) => {
+  Customer.findOne({ where: { username: "Admin" } }, (err, users) => {
     if (!users) {
       Customer.create(
         [
@@ -19,15 +19,15 @@ module.exports = function (app) {
 
           RoleMapping.destroyAll();
 
-          Role.findOne({ name: "admin" }, (err, role) => {
+          Role.findOne({ where: { name: "admin" } }, (err, role) => {
             if (!role) {
               Role.create({ name: "admin" }, (err, role) => {
                 if (err) throw err;
 
                 role.principals.create(
                   {
-                    prrincipals: RoleMapping.USER,
-                    principalId: users[0].id,
+                    principals: RoleMapping.USER,
+                    principalId: users[1].id,
                   },
                   (err, principal) => {
                     if (err) throw err;
@@ -35,9 +35,9 @@ module.exports = function (app) {
                 );
               });
             } else {
-              role.prrincipals.create(
+              role.principals.create(
                 {
-                  prrincipals: RoleMapping.USER,
+                  principals: RoleMapping.USER,
                   principalId: users[0].id,
                 },
                 (err, principal) => {
